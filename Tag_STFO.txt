@@ -1,0 +1,234 @@
+hotkey 'Clear Drag/Drop Queue'
+//Sets runebook.
+if not find 'MYRuNeBooK' 'backpack'
+    if name = 'SKiTS'
+        setvar 'MYRuNeBooK' 0x40671C28
+    endif
+    if name = 'All Mine'
+        setvar 'MYRuNeBooK' 0x404AE179
+    endif
+    if name = 'Col Major Miner'
+        setvar 'MYRuNeBooK' 0x4255F375
+    endif
+    if name = 'Mine Ore Die'
+        setvar 'MYRuNeBooK' 0x416E5ACA
+    endif
+    if name = 'SKiTTaSTiC'
+        setvar 'MYRuNeBooK' 0x48D3BC0D
+    endif
+    if name = 'BLaCK SKiTTLe'
+        setvar 'MYRuNeBooK' 0x453022D5
+    endif
+    if name = 'SKiTLJaCK'
+        setvar 'MYRuNeBooK' 0x445A3558
+    endif
+endif
+if skill 'Tactics' > 60 and find 'SHeLF' 'ground' 'any' 'any' 5
+    if not find 'SKiTWeP' 'self'
+        setvar 'SKiTWeP'
+        wait 250
+    endif
+endif
+
+if name = 'All Mine' and find 'SHeLF' 'ground' 'any' 'any' 5
+    if not find 'PaCKHoRSe1' 'ground' 'any' 'any' 2
+        setvar 'PaCKHoRSe1'
+        wait 250
+        hotkey 'Add Target To: Llamas'
+        target 'PaCKHoRSe1'
+        wait 900
+    endif
+    if not find 'PaCKHoRSe2' 'ground' 'any' 'any' 2
+        setvar 'PaCKHoRSe2'
+        wait 250
+        hotkey 'Add Target To: Llamas'
+        target 'PaCKHoRSe2'
+        wait 900
+    endif
+    if not find 'PaCKHoRSe3' 'ground' 'any' 'any' 2
+        setvar 'PaCKHoRSe3'
+        wait 250
+        hotkey 'Add Target To: Llamas'
+        target 'PaCKHoRSe3'
+        wait 900
+    endif
+endif
+
+if followers > 0 and followers < 6
+    say 'all guard me'
+endif
+
+while not dead
+    //not home? get there
+    while not find 'SHeLF' 'ground' 'any' 'any' 5
+        if skill 'Magery' > 50
+            while not targetexists
+                cast 'recall'
+            endwhile
+            wait 200
+            target 'MYRuNeBooK'
+            wait 2000
+        endif
+        if skill 'Magery' < 50
+            dclick 'MYRuNeBooK' 'backpack'
+            wait 250
+            if gumpexists 'Serial_Runetome'
+                gumpresponse 100
+            endif
+            if gumpexists 'Serial_Runebook'
+                gumpresponse 2
+            endif
+        endif
+    endwhile
+    //found shelf? ur home!
+    if find 'SHeLF' 'ground' 'any' 'any' 5
+        //Smelt ore in pack horses
+        if name = 'All Mine'
+            while findtype '6585' 'backpack'
+                dclicktype '6585' 'backpack'
+                wait 700
+            endwhile
+            dclick 'PaCKHoRSe1'
+            wait 900
+            while findtype '6585' 'PaCKHoRSe1' 'any' 'any' 2
+                dclicktype '6585' 'PaCKHoRSe1' 'any' 'any' 2
+                wait 700
+            endwhile
+            dclick 'PaCKHoRSe2'
+            wait 900
+            while findtype '6585' 'PaCKHoRSe2' 'any' 'any' 2
+                dclicktype '6585' 'PaCKHoRSe2' 'any' 'any' 2
+                wait 700
+            endwhile
+            dclick 'PaCKHoRSe3'
+            wait 900
+            while findtype '6585' 'PaCKHoRSe3' 'any' 'any' 2
+                dclicktype '6585' 'PaCKHoRSe3' 'any' 'any' 2
+                wait 700
+            endwhile
+        endif
+        //logs to boards
+        if findtype '7133' 'backpack' or findtype '2508' 'backpack' or findtype '7710' 'backpack'
+            while findtype '7133' 'backpack'
+                dclicktype '7133' 'backpack'
+                wait 250
+            endwhile
+            while findtype '2508' 'backpack'
+                dclicktype '2508' 'backpack'
+                wait 250
+            endwhile
+            while findtype '7710' 'backpack'
+                dclicktype '7710' 'backpack'
+                wait 250
+            endwhile
+        endif
+        wait 650
+        //drop off and resupply
+        menu 'SHeLF' 0
+        wft 900
+        target 'self'
+        wait 650
+        if gumpexists 3232825965
+            gumpclose 3232825965
+            wait 250
+        endif
+        menu 'SToCKPiLe' 0
+        wft 900
+        target 'self'
+        wait 650
+        menu 'SHeLF' 1
+        wait 900
+        target 'self'
+        if not findbuff 'magic reflection' and skill 'magery' > 50
+            cast 'magic reflection'
+            wait 2000
+        endif
+        //Tracks reds.
+        if skill 'tracking' > 39
+            skill 'tracking'
+            waitforgump 4267467659
+            if ingump 'Begin Hunting' 4267467659
+                gumpresponse 6
+                wait 250
+                gumpclose 4267467659
+            else
+                wait 250
+                gumpclose 4267467659
+            endif
+        endif
+
+        if insysmsg 'deceased follower' and find 'SHeLF' 'ground' 'any' 'any' 10
+            menu 'STaBLeMaSTeR' 4
+            wait 1000
+            if insysmsg 'recently been in combat'
+                overhead 'Waiting for Pet Rez!'
+                wait 10000
+                replay
+            endif
+            while followers < 5
+                for 5
+                    menu 'STaBLeMaSTeR' 3
+                    waitforgump 1380545801
+                    gumpresponse 10
+                    waitforgump 1380545801
+                    gumpclose 1380545801
+                    wait 1000
+                endfor
+            endwhile
+        endif
+
+        if name = 'All Mine'
+            dclick 'MineTome' 'ground' 'any' 'any' 2
+            wait 900
+            gumpresponse 3
+            wait 900
+            gumpresponse 500
+            wait 900
+            gumpclose 
+            wait 900
+            while findtype 'recall rune' 'backpack' as 'Runeski'
+                lift 'Runeski' 'backpack'
+                wait 900
+                drop 'MineTome' -1 -1 -1
+            endwhile
+            wait 1000
+            cast 'recall'
+            wft 2500
+            target 'MineTome' 'ground' 'any' 'any' 2
+            wait 2500
+            script 'YieLDeR'
+        endif
+        if skill 'Lumberjacking' > 49
+            dclick 'JackTome' 'ground' 'any' 'any' 2
+            wait 900
+            gumpresponse 3
+            wait 900
+            gumpresponse 500
+            wait 900
+            gumpclose 
+            wait 900
+            while findtype 'recall rune' 'backpack' as 'Runeski'
+                lift 'Runeski' 'backpack'
+                wait 900
+                drop 'JackTome' -1 -1 -1
+            endwhile
+            wait 1000
+            cast 'recall'
+            wft 2500
+            target 'JackTome' 'ground' 'any' 'any' 2
+            wait 2500
+            script 'LYieLD'
+        endif
+        if find 'PackLlama' 'ground' -1 -1 -1
+            menu 'SToCKPiLe' 0 
+            wft 2000
+            target 'PackLlama'
+        endif
+        if find 'SKiTWeP' 'backpack'
+            dclick 'SKiTWeP'
+            wait 650
+        endif
+        stop
+    endif
+            
+endwhile
