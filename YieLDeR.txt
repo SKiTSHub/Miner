@@ -1,0 +1,80 @@
+clearall
+//At a node
+clearsysmsg
+overhead 'mining'
+wait 610
+say 'all guard me'
+wait 610
+
+//Equip Pickaxe and Start Mining
+if rhandempty ?? 0
+    dclicktype '3718' 'backpack'
+    wait 600
+endif
+dclick 'hands'
+wait 650
+
+if not timerexists 'Travelwait'
+    createtimer 'Travelwait'
+    wait 900
+endif
+
+if insysmsg 'recently traveled'
+    settimer 'Travelwait' 0
+    wait 650
+    overhead 'Waiting for Travel Timer' 523
+    while timer 'Travelwait' < 55000
+        if insysmsg 'Now Tracking'
+            overhead 'PK Alert' 33
+            script 'Tag_STFO'
+        endif
+        wait 1000
+    endwhile
+    dclick 'hands'
+    wait 650
+endif
+
+//Start the permanent loop.
+while not dead
+    
+    //Now begin monitoring for results:
+    //you dig some = succesfully mined
+    //you losen some = succesfully mined
+    //no longer hindered = you have completed a rope action
+    if insysmsg 'you dig some' or insysmsg 'you loosen some' or insysmsg 'no longer hindered'
+        dclick hands
+    endif
+    
+    //Break out of the permanent loop if there is nothing left to gather at this node.
+    if insysmsg 'you do not see any harvestable resources nearby'
+        overhead 'No ore!' 55
+        script 'SKiTATLaS'
+    endif
+
+    //Check Tracking for murderers and check if we have a tool
+    if insysmsg 'tracking' or not findtype '3718' 'self'
+        overhead 'PK Alert or no tools' 33
+        script 'Tag_STFO'
+    endif
+
+    //Hand ore to packhorses if overweight
+    if diffweight <= 40
+        hotkey 'Next Friend Target'
+        waitforsysmsg 'new target'
+        say 'Feedin the horse!'
+        wait 900
+        while findtype 'iron ore' 'backpack'
+            lifttype 'iron ore' 60000 'backpack'
+            wait 650
+            drop 'lasttarget' 0 0 0
+        endwhile
+    endif
+    
+    //Make sure a pickaxe is equipped
+    if rhandempty ?? 0
+        dclicktype '3718' 'backpack'
+        wait 600
+    endif
+    //Wait 20 milliseconds just to chill
+    wait 20
+endwhile
